@@ -1,6 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a sample project [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) using [Awilix](https://github.com/jeffijoe/awilix) for Dependency Injection.
 
-## Getting Started
+## Problem
+
+While we do have access to transient and singleton injected objects we do not have access to objects that is scoped to the request itself.
+
+Since we cannot attach a conatiner to the the request object in Nextjs middleware we need to use [AsyncLocalStorage](https://nodejs.org/api/async_context.html) to store a scoped container that can be created and disposed off with each request.
+
+The next problem, is that as it stands currenly, is that there is no way to execute node runtime specific functions in NextJS middleware eiter ([discussion](https://github.com/vercel/next.js/discussions/46722)).
+
+This in essence means that we can't use NextJS middleware as a way to create/attach a request specific scoped container.
+
+So where can we then get access to the request and attach a container to it or atleast get notified of the incoming request and create a scoped container specific to this event.
+
+## Solution
+
+The only option I could see was to eject into a custom server for the NextJS project.
+
+While we can use express for this, this project aimed to make use of the [`NodeJS http server`](https://nodejs.org/api/http.html) as similar to how it shown in the NextJS documentation for [`pages router`](https://nextjs.org/docs/pages/building-your-application/configuring/custom-server).
+
+While Awilix does have a express adapter it does not have one for a node server and hence a custom DiService implementation was built to accept the incoming request, creating a async local storage object linked to the request and completing the request.
+
+## Side note
+
+This implementation does mean that it cannot run on Vercel serverless but can still be hosted on any other self-hosted or cloud hosted VM/Baremetal server.
+
+## To Run the project
 
 First, run the development server:
 
@@ -16,21 +40,8 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The page showcases 3 sets of random values:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. The first set showcases values gathered from a scoped container. These should only change between requests as the container is re-initialized with each request.
+2. The second set showcases values gathered from a singleton container. The container is initialized at application startup and hence the number should always remain constant.
+3. The last set showcases values gathered from a transient container. The container is initialized with each call made to it and hence the values should not only change with each request but the values itself should be different as it is gathered with two seperate calls to the container.
