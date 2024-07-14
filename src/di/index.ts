@@ -1,7 +1,7 @@
 import type { AwilixContainer } from 'awilix';
 import { asClass, createContainer, Lifetime } from 'awilix';
 import { AsyncLocalStorage } from 'async_hooks';
-import { RandomNumber } from '@/server/RandomNumber';
+import { RandomNumber } from '@/lib/RandomNumber';
 
 export type DiModules = {
 	randomNumberScoped: RandomNumber;

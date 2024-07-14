@@ -1,6 +1,6 @@
 {
 	"ignore": ["**/*/__mocks__/*.ts", "**/*.test.ts", "**/*.spec.ts", "node_modules", ".git"],
-	"watch": ["src/server/server.ts", "src/di/index.ts"],
-	"exec": "tsx --tsconfig tsconfig.server.json src/server/server.ts",
+	"watch": ["server/server.ts", "src/di/index.ts"],
+	"exec": "tsx --tsconfig tsconfig.json server/server.ts",
 	"ext": "js ts"
 }

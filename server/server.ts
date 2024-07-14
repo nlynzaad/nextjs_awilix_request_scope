@@ -14,5 +14,5 @@ app.prepare().then(() => {
 		diService.createRequestScope(() => handle(req, res, parsedUrl).then(diService.disposeRequestScope, diService.disposeRequestScope));
 	}).listen(port);
 
-	console.log(`> Server listening at http://localhost:${port} as ${dev ? 'development' : process.env.NODE_ENV}`);
+	console.log(`Server listening at http://localhost:${port} as ${dev ? 'development' : process.env.NODE_ENV}`);
 });
